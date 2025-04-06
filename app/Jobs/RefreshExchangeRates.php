@@ -31,6 +31,13 @@ class RefreshExchangeRates implements ShouldQueue
             return;
         }
 
+        // ⏳ Skip if updated within last 30 minutes
+        $lastUpdated = Setting::get('exchange_rates_last_updated');
+        if ($lastUpdated && now()->diffInMinutes($lastUpdated) < 30) {
+            Log::info('[ExchangeRate] Skipped: updated less than 30 minutes ago.');
+            return;
+        }
+
         // 🔑 Fetch the API key from settings
         $apiKey = Setting::get('exchange_api_key');
         if (!$apiKey) {
@@ -68,7 +75,7 @@ class RefreshExchangeRates implements ShouldQueue
             );
         }
 
-        // 🕒 Optional: store unified last-updated value
+        // 🕒 Store unified last-updated value
         Setting::set('exchange_rates_last_updated', now()->toDateTimeString());
 
         Log::info('[ExchangeRate] Rates refreshed successfully.', [
