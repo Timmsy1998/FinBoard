@@ -15,6 +15,7 @@ use App\Http\Middleware\EnsureSetupIsComplete;
 use App\Http\Middleware\CheckRole;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,10 +32,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Router $router): void
     {
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
         $router->pushMiddlewareToGroup('web', EnsureSetupIsComplete::class);
 
         Vite::prefetch(concurrency: 3);
-        Schedule::command('rates:refresh')->hourly();
         Schedule::job(new RefreshExchangeRates('USD'))->hourly();
     }
 }
