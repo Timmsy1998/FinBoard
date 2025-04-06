@@ -41,6 +41,9 @@ const appLogo = computed(() => page.props.app?.logo ?? null)
                     <NavItem icon="mdi:briefcase-outline" label="Portfolio" :href="route('portfolio')" />
                     <NavItem icon="mdi:swap-horizontal-bold" label="Transactions" :href="route('transactions')" />
                     <NavItem icon="mdi:chart-line" label="Analytics" :href="route('analytics')" />
+                    <NavItem icon="mdi:account-multiple-outline" :label="'Users'" :href="route('users.index')"
+                        v-if="user?.role === 'admin' || user?.role === 'superuser'" />
+
                 </nav>
             </div>
 

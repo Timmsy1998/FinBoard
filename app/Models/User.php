@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -21,7 +19,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_superuser',
+        'role', // ✅ Single source of truth for permissions
     ];
 
     /**
@@ -35,7 +33,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast to native types.
      *
      * @return array<string, string>
      */
@@ -44,7 +42,30 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_superuser' => 'boolean',
         ];
+    }
+
+    /**
+     * Helper: Check if user has superuser role.
+     */
+    public function isSuperuser(): bool
+    {
+        return $this->role === 'superuser';
+    }
+
+    /**
+     * Helper: Check if user has admin role.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Helper: Check if user has standard user role.
+     */
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
     }
 }

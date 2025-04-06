@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\ExchangeRate;
 use App\Models\Setting;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('analytics');
 });
 
+Route::middleware(['auth', 'verified', 'role:admin,superuser'])->group(function () {
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -57,3 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | By default, this section only includes the Breeze authentication routes.
 */
 require __DIR__ . '/auth.php';
+
+Route::fallback(function () {
+    return inertia('Errors/NotFound')->toResponse(request())->setStatusCode(404);
+});

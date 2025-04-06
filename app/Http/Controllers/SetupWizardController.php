@@ -50,6 +50,7 @@ class SetupWizardController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'is_superuser' => true,
+            'role' => 'superuser',
         ]);
 
         Setting::set('app_name', $data['app_name']);

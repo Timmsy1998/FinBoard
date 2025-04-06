@@ -51,11 +51,5 @@ const form = useForm({
             <!-- Submit -->
             <Button :isLoading="form.processing" variant="primary">Login</Button>
         </form>
-
-        <!-- Register CTA -->
-        <p class="text-center text-sm text-gray-600 dark:text-gray-400">
-            Don’t have an account?
-            <a :href="route('register')" class="text-blue-500 hover:underline">Create one</a>
-        </p>
     </div>
 </template>
