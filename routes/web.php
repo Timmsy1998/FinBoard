@@ -8,6 +8,8 @@ use App\Models\ExchangeRate;
 use App\Models\Setting;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ExchangeRateController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +55,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/docs/form', function () {
         return inertia('Docs/FormComponents');
     })->name('docs.form-components');
+
+    // API Routes
+    Route::get('/api/exchange-rates', [ExchangeRateController::class, 'fetch']);
+    Route::get('/api/exchange-trends', [ExchangeRateController::class, 'trends']);
+
+
 });
 
 Route::middleware(['auth', 'verified', 'role:admin,superuser'])->group(function () {

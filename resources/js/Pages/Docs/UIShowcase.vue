@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted } from 'vue'
 import Button from '@/Components/ui/Button.vue'
 import Card from '@/Components/ui/Card.vue'
 import ConfirmDialog from '@/Components/ui/ConfirmDialog.vue'
@@ -17,10 +18,10 @@ import TextArea from '@/Components/ui/TextArea.vue'
 import Toast from '@/Components/ui/Toast.vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 
+// Dashboard widgets
 import ChartWidget from '@/Components/dashboard/ChartWidget.vue'
 import SparklineWidget from '@/Components/dashboard/SparklineWidget.vue'
-
-import { ref } from 'vue'
+import WidgetWrapper from '@/Components/ui/WidgetWrapper.vue'
 
 const showModal = ref(false)
 const showConfirm = ref(false)
@@ -28,6 +29,16 @@ const switchValue = ref(false)
 const inputValue = ref('')
 const selectedOption = ref('option1')
 const textValue = ref('Sample text area content')
+
+// Simulate loading state for widgets
+const widgetLoading = ref(true)
+
+onMounted(() => {
+    setTimeout(() => {
+        widgetLoading.value = false
+    }, 1500)
+})
+
 defineOptions({ layout: AuthenticatedLayout })
 </script>
 
@@ -35,7 +46,7 @@ defineOptions({ layout: AuthenticatedLayout })
     <div class="space-y-12 px-6 py-12 max-w-6xl mx-auto">
         <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">🎨 UI Component Showcase</h1>
 
-        <!-- UI Components Section -->
+        <!-- UI Components -->
         <section>
             <h2 class="text-xl font-medium text-gray-700 dark:text-gray-200 mb-4">UI Components</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -44,8 +55,8 @@ defineOptions({ layout: AuthenticatedLayout })
                 </Card>
 
                 <Card title="Input">
-                    <Label for="example-input" text="Name" />
-                    <Input id="example-input" v-model="inputValue" placeholder="Your name" />
+                    <Label for="input-demo">Your Name</Label>
+                    <Input id="input-demo" v-model="inputValue" placeholder="e.g. Jane Doe" />
                 </Card>
 
                 <Card title="Select">
@@ -56,38 +67,43 @@ defineOptions({ layout: AuthenticatedLayout })
                 </Card>
 
                 <Card title="Switch">
-                    <Switch v-model="switchValue" label="Enable feature" />
+                    <Switch v-model="switchValue" label="Enable Feature" />
                 </Card>
 
                 <Card title="TextArea">
-                    <TextArea v-model="textValue" placeholder="Enter a description..." />
+                    <TextArea v-model="textValue" placeholder="Tell us more..." />
                 </Card>
 
                 <Card title="Modal">
-                    <Button @click="showModal = true">Show Modal</Button>
-                    <Modal :visible="showModal" title="Sample Modal" @close="showModal = false">
-                        <p>This is a custom modal using your component.</p>
+                    <Button @click="showModal = true">Open Modal</Button>
+                    <Modal :visible="showModal" title="Hello Modal" @close="showModal = false">
+                        <p>This is a custom modal.</p>
                     </Modal>
                 </Card>
 
                 <Card title="Confirm Dialog">
-                    <Button variant="danger" @click="showConfirm = true">Delete Something</Button>
-                    <ConfirmDialog v-if="showConfirm" title="Are you sure?" message="This cannot be undone."
+                    <Button variant="danger" @click="showConfirm = true">Danger Zone</Button>
+                    <ConfirmDialog v-if="showConfirm" title="Confirm Action" message="This can't be undone."
                         @cancel="showConfirm = false" @confirm="showConfirm = false" />
                 </Card>
 
                 <Card title="Toast Notification">
-                    <Toast message="✔️ Changes saved successfully!" />
+                    <Toast message="✅ Saved successfully!" />
                 </Card>
 
                 <Card title="Pagination">
-                    <Pagination :current-page="1" :total-pages="3" />
+                    <Pagination :links="[
+                        { url: null, label: '&laquo;', active: false },
+                        { url: '#', label: '1', active: true },
+                        { url: '#', label: '2', active: false },
+                        { url: '#', label: '&raquo;', active: false }
+                    ]" :meta="{ from: 1, to: 10, total: 30 }" />
                 </Card>
 
                 <Card title="Error Boundary">
                     <ErrorBoundary>
                         <template #default>
-                            <div>Safe content goes here.</div>
+                            <div>Everything is fine.</div>
                         </template>
                     </ErrorBoundary>
                 </Card>
@@ -97,7 +113,7 @@ defineOptions({ layout: AuthenticatedLayout })
                 </Card>
 
                 <Card title="IconWrapper + NavItem">
-                    <IconWrapper icon="mdi:rocket-launch" />
+                    <IconWrapper icon="mdi:star" />
                     <div class="mt-2">
                         <NavItem icon="mdi:home" label="Home" href="/" />
                     </div>
@@ -105,29 +121,29 @@ defineOptions({ layout: AuthenticatedLayout })
             </div>
         </section>
 
-        <!-- Dashboard Widgets Section -->
+        <!-- Dashboard Widgets -->
         <section>
             <h2 class="text-xl font-medium text-gray-700 dark:text-gray-200 mb-4 mt-10">📊 Dashboard Widgets</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card title="Chart Widget">
-                    <ChartWidget title="Sample Chart" :labels="['Mon', 'Tue', 'Wed']" :dataset="{
+                <WidgetWrapper :loading="widgetLoading">
+                    <ChartWidget title="Balance Chart" :labels="['Mon', 'Tue', 'Wed']" :dataset="{
                         label: 'Balance',
                         data: [100, 150, 120],
-                        backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                        borderColor: '#4F46E5',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderColor: '#3B82F6',
                     }" />
-                </Card>
+                </WidgetWrapper>
 
-                <Card title="Sparkline Widget">
-                    <SparklineWidget title="Sparkline: Last 5 Days" :data="[10, 22, 18, 26, 30]" />
-                </Card>
+                <WidgetWrapper :loading="widgetLoading">
+                    <SparklineWidget title="Weekly Sparkline" :data="[50, 60, 80, 70, 90]" />
+                </WidgetWrapper>
 
-                <Card title="Stat Tile">
+                <WidgetWrapper :loading="widgetLoading">
                     <div class="grid grid-cols-2 gap-4">
-                        <StatTile label="Monthly Revenue" :value="12450.75" currency="USD" icon="mdi:cash-multiple" />
-                        <StatTile label="New Users" :value="308" icon="mdi:account-plus" />
+                        <StatTile label="Monthly Revenue" value="$12,450" icon="mdi:cash-multiple" />
+                        <StatTile label="New Users" value="308" icon="mdi:account-plus" />
                     </div>
-                </Card>
+                </WidgetWrapper>
             </div>
         </section>
     </div>
