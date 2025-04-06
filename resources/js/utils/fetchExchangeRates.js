@@ -1,6 +1,11 @@
-export async function fetchExchangeRates(base = 'USD') {
+export async function fetchExchangeRates(base = 'USD', apiKey = '') {
     try {
-        const res = await fetch(`https://api.exchangerate.host/latest?base=${base}`)
+        let url = `https://api.exchangerate.host/latest?base=${base}`
+        if (apiKey) {
+            url += `&access_key=${apiKey}`
+        }
+
+        const res = await fetch(url)
         const data = await res.json()
 
         if (!data || !data.rates) throw new Error('Invalid response')

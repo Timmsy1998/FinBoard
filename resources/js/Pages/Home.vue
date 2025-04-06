@@ -10,8 +10,33 @@ import { computed } from 'vue'
 import ExchangeRatesModule from '@/Components/dashboard/ExchangeRatesModule.vue'
 
 defineProps({ exchangeRates: Array })
+defineOptions({ layout: AuthenticatedLayout })
 
-const user = computed(() => usePage().props.auth?.user ?? {})
+const page = usePage()
+const user = computed(() => page.props.auth?.user ?? {})
+const settings = page.props.settings
+const { currency, rate } = useCurrency()
+
+const exchangeEnabled = computed(() => settings.exchangeEnabled)
+const baseCurrency = computed(() => settings.baseCurrency || 'USD')
+
+// Fake raw balance data
+const rawBalance = 12800
+const rawMonthlyGains = 1210.4
+const rawExpenses = 3500
+
+// Stats formatting
+const totalBalance = computed(() =>
+    exchangeEnabled.value ? convertAndFormat(rawBalance, rate.value, currency.value) : `${rawBalance} ${baseCurrency.value}`
+)
+
+const monthlyGains = computed(() =>
+    exchangeEnabled.value ? convertAndFormat(rawMonthlyGains, rate.value, currency.value) : `${rawMonthlyGains} ${baseCurrency.value}`
+)
+
+const expenses = computed(() =>
+    exchangeEnabled.value ? convertAndFormat(rawExpenses, rate.value, currency.value) : `${rawExpenses} ${baseCurrency.value}`
+)
 
 const chartLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const chartData = {
@@ -30,17 +55,11 @@ const transactions = [
     { label: 'Crypto Sell', amount: 1200, category: 'crypto' },
     { label: 'Flight to NYC', amount: -278, category: 'travel' },
 ]
-
-const { currency, rate } = useCurrency()
-
-const totalBalance = computed(() => convertAndFormat(12800, rate.value, currency.value))
-const monthlyGains = computed(() => convertAndFormat(1210.4, rate.value, currency.value))
-const expenses = computed(() => convertAndFormat(3500, rate.value, currency.value))
 </script>
 
 <template>
     <div class="px-6 pt-12 pb-24 space-y-12">
-        <!-- Welcome Bar -->
+        <!-- Welcome -->
         <div class="flex items-center justify-between">
             <div>
                 <h1 v-if="user" class="text-4xl font-light tracking-tight text-gray-900 dark:text-white">
@@ -50,7 +69,7 @@ const expenses = computed(() => convertAndFormat(3500, rate.value, currency.valu
             </div>
         </div>
 
-        <!-- Stats Row -->
+        <!-- Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <StatTile label="Total Balance" :value="totalBalance" icon="mdi:wallet-outline"
                 icon-color="text-blue-500" />
@@ -58,17 +77,14 @@ const expenses = computed(() => convertAndFormat(3500, rate.value, currency.valu
             <StatTile label="Expenses" :value="expenses" icon="mdi:credit-card-outline" icon-color="text-red-500" />
         </div>
 
-        <!-- Chart + Activity Grid -->
+        <!-- Chart + Transactions -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <ChartWidget title="Balance Trend (7 Days)" :labels="chartLabels" :dataset="chartData" />
             <TransactionList :transactions="transactions" :currency="currency.value" :rate="rate.value" :perPage="4" />
-            <ExchangeRatesModule :rates="exchangeRates" />
+
+            <!-- Conditionally show if exchange enabled -->
+            <ExchangeRatesModule v-if="$page.props.app.exchangeRatesEnabled" :rates="exchangeRates" />
+
         </div>
     </div>
 </template>
-
-<script>
-export default {
-    layout: AuthenticatedLayout,
-}
-</script>

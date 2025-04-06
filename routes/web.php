@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Models\ExchangeRate;
 use App\Models\Setting;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,9 @@ Route::middleware(['auth', 'verified', 'role:admin,superuser'])->group(function 
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings');
+    Route::post('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 });
 
 /*

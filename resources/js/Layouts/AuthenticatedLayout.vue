@@ -43,6 +43,8 @@ const appLogo = computed(() => page.props.app?.logo ?? null)
                     <NavItem icon="mdi:chart-line" label="Analytics" :href="route('analytics')" />
                     <NavItem icon="mdi:account-multiple-outline" :label="'Users'" :href="route('users.index')"
                         v-if="user?.role === 'admin' || user?.role === 'superuser'" />
+                    <NavItem v-if="user.role === 'superuser'" icon="mdi:cog-outline" :label="'Admin'"
+                        :href="route('admin.settings')" />
 
                 </nav>
             </div>
@@ -64,8 +66,8 @@ const appLogo = computed(() => page.props.app?.logo ?? null)
                     <span>{{ new Date().toLocaleDateString() }}</span>
                 </div>
 
-                <!-- Currency Switcher -->
-                <select v-model="currency"
+                <!-- Only show currency switcher if exchange rates are enabled -->
+                <select v-if="page.props.app.exchangeRatesEnabled" v-model="currency"
                     class="bg-transparent text-sm text-gray-700 dark:text-gray-200 border-none focus:ring-0">
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>

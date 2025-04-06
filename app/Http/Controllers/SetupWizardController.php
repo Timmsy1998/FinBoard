@@ -43,26 +43,29 @@ class SetupWizardController extends Controller
         if (Setting::get('setup_complete') === 'true') {
             return redirect()->route('login');
         }
+
         $data = $request->all();
 
         User::create([
             'name' => $data['user_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'is_superuser' => true,
             'role' => 'superuser',
         ]);
 
         Setting::set('app_name', $data['app_name']);
         Setting::set('base_currency', $data['base_currency']);
         Setting::set('exchange_api_key', $data['api_key']);
+        Setting::set('exchange_rates_enabled', filled($data['api_key']) ? '1' : '0');
         Setting::set('timezone', $data['timezone']);
+
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('logos', 'public');
             Setting::set('board_logo', $path);
         } else {
             Setting::set('board_logo', null);
         }
+
         Setting::set('setup_complete', 'true');
 
         SetupLog::create([
@@ -81,4 +84,5 @@ class SetupWizardController extends Controller
 
         return redirect()->route('login')->with('success', 'Setup complete. Please log in.');
     }
+
 }
