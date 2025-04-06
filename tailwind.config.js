@@ -13,8 +13,17 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                brand: {
+                    50: '#F4F7FC',
+                    100: '#E4E9F2',
+                    600: '#2F3A8F', // Dark Navy
+                    700: '#232E6A',
+                    accent: '#FFD580', // Premium Gold
+                },
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
         },
     },

@@ -6,12 +6,17 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\SetupWizardController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('guest')->group(function () {
+Route::middleware(['guest', 'web'])->group(function () {
+    Route::get('/setup', [SetupWizardController::class, 'index'])->name('setup');
+    Route::post('/setup/step', [SetupWizardController::class, 'step']);
+    Route::post('/setup/complete', [SetupWizardController::class, 'complete']);
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 

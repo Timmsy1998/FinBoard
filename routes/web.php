@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\ExchangeRate;
+use App\Models\Setting;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +20,13 @@ use Inertia\Inertia;
 Route::middleware(['auth', 'verified'])->group(function () {
     // Main dashboard landing page after login
     Route::get('/', function () {
-        return inertia('Home');
+        $baseCurrency = Setting::get('base_currency', 'USD');
+
+        return inertia('Home', [
+            'exchangeRates' => ExchangeRate::where('base_currency', $baseCurrency)
+                ->orderBy('target_currency')
+                ->get()
+        ]);
     })->name('dashboard');
 
     // User's portfolio overview

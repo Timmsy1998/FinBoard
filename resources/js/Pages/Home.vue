@@ -1,0 +1,74 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import { usePage } from '@inertiajs/vue3'
+import StatTile from '@/Components/ui/StatTile.vue'
+import ChartWidget from '@/Components/dashboard/ChartWidget.vue'
+import TransactionList from '@/Components/dashboard/TransactionList.vue'
+import { useCurrency } from '@/composables/useCurrency'
+import { convertAndFormat } from '@/utils/currency'
+import { computed } from 'vue'
+import ExchangeRatesModule from '@/Components/dashboard/ExchangeRatesModule.vue'
+
+defineProps({ exchangeRates: Array })
+
+const user = computed(() => usePage().props.auth?.user ?? {})
+
+const chartLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const chartData = {
+    label: 'Balance',
+    data: [12200, 12400, 12300, 12650, 12700, 12550, 12800],
+    borderColor: '#4F46E5',
+    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+    tension: 0.4,
+}
+
+const transactions = [
+    { label: 'Starbucks Coffee', amount: -5.75, category: 'dining' },
+    { label: 'January Salary', amount: 3000, category: 'salary' },
+    { label: 'Crypto Buy', amount: -420, category: 'crypto' },
+    { label: 'Whole Foods', amount: -52.13, category: 'groceries' },
+    { label: 'Crypto Sell', amount: 1200, category: 'crypto' },
+    { label: 'Flight to NYC', amount: -278, category: 'travel' },
+]
+
+const { currency, rate } = useCurrency()
+
+const totalBalance = computed(() => convertAndFormat(12800, rate.value, currency.value))
+const monthlyGains = computed(() => convertAndFormat(1210.4, rate.value, currency.value))
+const expenses = computed(() => convertAndFormat(3500, rate.value, currency.value))
+</script>
+
+<template>
+    <div class="px-6 pt-12 pb-24 space-y-12">
+        <!-- Welcome Bar -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 v-if="user" class="text-4xl font-light tracking-tight text-gray-900 dark:text-white">
+                    Welcome back, <span class="font-semibold">{{ user.name }}</span>
+                </h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Here’s your financial overview.</p>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <StatTile label="Total Balance" :value="totalBalance" icon="mdi:wallet-outline"
+                icon-color="text-blue-500" />
+            <StatTile label="Monthly Gains" :value="monthlyGains" icon="mdi:trending-up" icon-color="text-green-500" />
+            <StatTile label="Expenses" :value="expenses" icon="mdi:credit-card-outline" icon-color="text-red-500" />
+        </div>
+
+        <!-- Chart + Activity Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <ChartWidget title="Balance Trend (7 Days)" :labels="chartLabels" :dataset="chartData" />
+            <TransactionList :transactions="transactions" :currency="currency.value" :rate="rate.value" :perPage="4" />
+            <ExchangeRatesModule :rates="exchangeRates" />
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    layout: AuthenticatedLayout,
+}
+</script>

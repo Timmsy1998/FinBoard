@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Setting;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -31,8 +32,21 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ?? null,
+            ],
+
+            'app' => [
+                'name' => Setting::get('app_name', 'FinBoard'),
+                'logo' => Setting::get('board_logo')
+                    ? asset('storage/' . Setting::get('board_logo'))
+                    : null,
+            ],
+
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
             ],
         ];
     }
