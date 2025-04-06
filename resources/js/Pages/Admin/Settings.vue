@@ -4,6 +4,8 @@ import Input from '@/Components/ui/Input.vue'
 import Button from '@/Components/ui/Button.vue'
 import Select from '@/Components/ui/Select.vue'
 import Toast from '@/Components/ui/Toast.vue'
+import Checkbox from '@/Components/ui/Switch.vue'
+import Label from '@/Components/ui/Label.vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { computed } from 'vue'
 
@@ -15,6 +17,7 @@ const form = useForm({
     exchange_api_key: settings.exchange_api_key,
     base_currency: settings.base_currency,
     timezone: settings.timezone,
+    demo_mode: settings.demo_mode === '1',
 })
 
 function save() {
@@ -41,10 +44,14 @@ defineOptions({ layout: AuthenticatedLayout })
         <Toast v-if="$page.props.flash?.success" :message="$page.props.flash.success" />
 
         <form @submit.prevent="save" class="space-y-6">
+            <Label for="app_name" required>Application Name</Label>
             <Input label="Application Name" v-model="form.app_name" :error="form.errors.app_name" required />
 
+            <Label for="exchange_api_key">ExchangeRate API Key</Label>
             <Input label="ExchangeRate API Key" v-model="form.exchange_api_key" :error="form.errors.exchange_api_key"
                 placeholder="Optional" />
+
+            <Label for="base_currency" required>Base Currency</Label>
 
             <Select label="Base Currency" v-model="form.base_currency" :options="[
                 { label: 'USD', value: 'USD' },
@@ -54,12 +61,18 @@ defineOptions({ layout: AuthenticatedLayout })
                 { label: 'JPY', value: 'JPY' },
             ]" :error="form.errors.base_currency" />
 
+            <Label for="timezone" required>Timezone</Label>
             <Select label="Timezone" v-model="form.timezone" :options="[
                 { label: 'UTC', value: 'UTC' },
                 { label: 'Europe/London', value: 'Europe/London' },
                 { label: 'America/New_York', value: 'America/New_York' },
                 { label: 'Asia/Kolkata', value: 'Asia/Kolkata' },
             ]" :error="form.errors.timezone" />
+
+            <Checkbox v-model="form.demo_mode" label="Enable Demo Mode" />
+            <Label for="demo_mode">Enable Demo Mode</Label>
+
+
 
             <div class="pt-4">
                 <Button type="submit" :disabled="form.processing">

@@ -43,7 +43,9 @@ class HandleInertiaRequests extends Middleware
                     ? asset('storage/' . Setting::get('board_logo'))
                     : null,
                 'exchangeRatesEnabled' => (bool) Setting::get('exchange_rates_enabled'),
+                'demoMode' => (bool) Setting::get('demo_mode', false),
             ],
+
 
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),
