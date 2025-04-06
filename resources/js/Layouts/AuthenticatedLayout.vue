@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useTheme } from '@/composables/useTheme'
 import { useCurrency } from '@/composables/useCurrency'
 import { usePage, Link } from '@inertiajs/vue3'
@@ -20,6 +20,9 @@ const user = computed(() => page.props.auth?.user ?? null)
 // 🏷️ App branding
 const appName = computed(() => page.props.app?.name ?? 'FinBoard')
 const appLogo = computed(() => page.props.app?.logo ?? null)
+
+const showDocs = computed(() => page.props.app?.demoMode === true || page.props.app?.demoMode === '1')
+const docsOpen = ref(false)
 </script>
 
 <template>
@@ -32,7 +35,7 @@ const appLogo = computed(() => page.props.app?.logo ?? null)
                 <div class="mb-8">
                     <img v-if="appLogo" :src="appLogo" alt="Logo" class="h-8 object-contain" />
                     <div v-else class="text-2xl font-semibold text-brand-600 dark:text-white tracking-tight">{{ appName
-                        }}</div>
+                    }}</div>
                 </div>
 
                 <!-- Navigation -->
@@ -45,7 +48,23 @@ const appLogo = computed(() => page.props.app?.logo ?? null)
                         v-if="user?.role === 'admin' || user?.role === 'superuser'" />
                     <NavItem v-if="user.role === 'superuser'" icon="mdi:cog-outline" :label="'Admin'"
                         :href="route('admin.settings')" />
+                    <div v-if="showDocs">
+                        <button @click="docsOpen = !docsOpen"
+                            class="flex items-center justify-between w-full px-2 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition">
+                            <span class="flex items-center gap-2">
+                                <Icon icon="mdi:book-open-outline" class="w-5 h-5" />
+                                <span>Docs</span>
+                            </span>
+                            <Icon :icon="docsOpen ? 'mdi:chevron-up' : 'mdi:chevron-down'" class="w-4 h-4" />
+                        </button>
 
+                        <div v-show="docsOpen" class="pl-6 mt-2 space-y-1 transition-all duration-300">
+                            <NavItem label="UI Showcase" :href="route('docs.ui-showcase')"
+                                icon="mdi:view-grid-outline" />
+                            <NavItem label="Form Components" :href="route('docs.form-components')"
+                                icon="mdi:form-select" />
+                        </div>
+                    </div>
                 </nav>
             </div>
 

@@ -45,6 +45,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/analytics', function () {
         return inertia('Analytics');
     })->name('analytics');
+
+    // Doc Routes for When Demo Mode is Enabled
+    Route::get('/docs/ui', function () {
+        return inertia('Docs/UIShowcase');
+    })->name('docs.ui-showcase');
+    Route::get('/docs/form', function () {
+        return inertia('Docs/FormComponents');
+    })->name('docs.form-components');
 });
 
 Route::middleware(['auth', 'verified', 'role:admin,superuser'])->group(function () {

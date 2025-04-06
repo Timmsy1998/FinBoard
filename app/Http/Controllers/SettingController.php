@@ -17,6 +17,7 @@ class SettingController extends Controller
                 'exchange_api_key' => Setting::get('exchange_api_key', ''),
                 'base_currency' => Setting::get('base_currency', 'USD'),
                 'timezone' => Setting::get('timezone', 'UTC'),
+                'demo_mode' => Setting::get('demo_mode', '0'),
             ],
         ]);
     }
@@ -28,6 +29,7 @@ class SettingController extends Controller
             'exchange_api_key' => 'nullable|string|max:255',
             'base_currency' => 'required|string|max:3',
             'timezone' => 'required|string|max:100',
+            'demo_mode' => 'nullable|boolean',
         ]);
 
         Setting::set('app_name', $validated['app_name']);
@@ -36,6 +38,7 @@ class SettingController extends Controller
         Setting::set('timezone', $validated['timezone']);
 
         Setting::set('exchange_rates_enabled', filled($validated['exchange_api_key']) ? '1' : '0');
+        Setting::set('demo_mode', $request->boolean('demo_mode') ? '1' : '0');
 
         return redirect()->back()->with('success', 'Settings updated successfully.');
     }
