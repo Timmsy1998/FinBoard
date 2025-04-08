@@ -16,6 +16,7 @@ use App\Http\Middleware\CheckRole;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\URL;
+use app\Helpers\DemoHelper;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(DemoHelper::class, fn() => new DemoHelper());
     }
 
     /**

@@ -1,0 +1,77 @@
+{
+    "balance": 12800,
+    "monthlyGains": 1210.4,
+    "expenses": 3500,
+    "transactions": [
+        {
+            "label": "Starbucks Coffee",
+            "amount": -5.75,
+            "category": "dining"
+        },
+        {
+            "label": "January Salary",
+            "amount": 3000,
+            "category": "salary"
+        },
+        {
+            "label": "Crypto Buy",
+            "amount": -420,
+            "category": "crypto"
+        },
+        {
+            "label": "Whole Foods",
+            "amount": -52.13,
+            "category": "groceries"
+        },
+        {
+            "label": "Crypto Sell",
+            "amount": 1200,
+            "category": "crypto"
+        },
+        {
+            "label": "Flight to NYC",
+            "amount": -278,
+            "category": "travel"
+        }
+    ],
+    "trends": {
+        "USD": [
+            1.28,
+            1.29,
+            1.29,
+            1.3,
+            1.31
+        ],
+        "EUR": [
+            1.15,
+            1.16,
+            1.17,
+            1.18,
+            1.18
+        ],
+        "JPY": [
+            189.2,
+            189.3,
+            189.4,
+            189.5,
+            189.6
+        ],
+        "GBP": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "exchangeRates": [
+        {
+            "target": "USD",
+            "rate": 1.28785
+        },
+        {
+            "target": "EUR",
+            "rate": 1.1751
+        }
+    ]
+}
